@@ -1,0 +1,40 @@
+@prefix : <https://w3id.org/conn#>.
+@prefix ex:     <http://example.org/ns#>.
+@prefix js: <https://w3id.org/conn/js#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfl: <https://w3id.org/rdf-lens/ontology#>.
+@prefix stapi: <https://pod.rubendedecker.be/scholar/ontologies/stapi#> .
+
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tree:   <https://w3id.org/tree#> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix sds:    <https://w3id.org/sds#> .
+@prefix dcat:   <https://www.w3.org/ns/dcat#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix sh:     <http://www.w3.org/ns/shacl#>.
+@prefix void:   <http://rdfs.org/ns/void#> .
+@prefix ldes:   <https://w3id.org/ldes#>.
+@prefix dct:    <http://purl.org/dc/terms/>.
+
+<> owl:imports <node_modules/@rdfc/js-runner/ontology.ttl>.
+<> owl:imports <node_modules/@rdfc/js-runner/channels/file.ttl>.
+<> owl:imports <node_modules/@rdfc/file-utils-processors-ts/processors.ttl>.
+<> owl:imports <node_modules/@rdfc/http-utils-processor-ts/processors.ttl>.
+<> owl:imports <./sensorthings-fetch/processor.ttl>.
+
+<data/writer> a :FileWriterChannel;
+    :fileOnReplace "false";
+    :filePath [ a rdfl:EnvVariable;
+        rdfl:envDefault "/home/dexa/Ugent/doctorate/projects/deployEMDS/out.json";
+        rdfl:envKey "OUT";
+    ].
+
+# HTTP Fetch of the Observations
+[ ] a js:FetchStapi;
+	js:url [ a rdfl:EnvVariable;
+		rdfl:envDefault "https://iot.hamburg.de/v1.1/Datastreams(23152)/Observations";
+		rdfl:envKey "URL";
+	];
+    js:pageSize 15;
+	js:writer <data/writer>.

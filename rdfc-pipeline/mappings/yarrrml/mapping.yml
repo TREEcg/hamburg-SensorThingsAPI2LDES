@@ -1,0 +1,16 @@
+prefixes:
+ stapi: "https://pod.rubendedecker.be/scholar/ontologies/stapi#"
+ xsd: "http://www.w3.org/2001/XMLSchema#"
+
+mappings:
+  observation:
+    sources:
+      - ['data.json~jsonpath', '$.value[*]']
+    s: $(['@iot.selfLink'])
+    po:
+      - [a, stapi:Observation]
+      - [stapi:phenomenonTime, $(phenomenonTime), xsd:duration]
+      - [stapi:resultTime, $(resultTime), xsd:dateTime]
+      - [stapi:result, $(result)]
+      - [stapi:datastream, "$(['Datastream@iot.navigationLink'])" ]
+      - [stapi:featureOfInterest, "$(['FeatureOfInterest@iot.navigationLink'])" ]

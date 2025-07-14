@@ -1,0 +1,80 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix map: <http://mapping.example.com/> .
+@prefix stapi: <https://pod.rubendedecker.be/scholar/ontologies/stapi> .
+
+map:map_observation_000 rml:logicalSource map:source_000 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "observation" ;
+	rr:predicateObjectMap map:pom_000, map:pom_001, map:pom_002, map:pom_003, map:pom_004 ;
+	rr:subjectMap map:s_000 .
+
+map:om_000 rml:reference "phenomenonTime" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_001 rml:reference "resultTime" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_002 rml:reference "result" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_003 rml:reference "['Datastream@iot.navigationLink']" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_004 rml:reference "['FeatureOfInterest@iot.navigationLink']" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:pm_000 rdf:type rr:PredicateMap ;
+	rr:constant stapi:phenomenonTime .
+
+map:pm_001 rdf:type rr:PredicateMap ;
+	rr:constant stapi:resultTime .
+
+map:pm_002 rdf:type rr:PredicateMap ;
+	rr:constant stapi:result .
+
+map:pm_003 rdf:type rr:PredicateMap ;
+	rr:constant stapi:datastream .
+
+map:pm_004 rdf:type rr:PredicateMap ;
+	rr:constant stapi:featureOfInterest .
+
+map:pom_000 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_000 ;
+	rr:predicateMap map:pm_000 .
+
+map:pom_001 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_001 ;
+	rr:predicateMap map:pm_001 .
+
+map:pom_002 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_002 ;
+	rr:predicateMap map:pm_002 .
+
+map:pom_003 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_003 ;
+	rr:predicateMap map:pm_003 .
+
+map:pom_004 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_004 ;
+	rr:predicateMap map:pm_004 .
+
+map:rules_000 <http://rdfs.org/ns/void#exampleResource> map:map_observation_000 ;
+	rdf:type <http://rdfs.org/ns/void#Dataset> .
+
+map:s_000 rml:reference "['@iot.selfLink']" ;
+	rdf:type rr:SubjectMap .
+
+map:source_000 rml:iterator "$.value[*]" ;
+	rml:referenceFormulation ql:JSONPath ;
+	rml:source "data.json" ;
+	rdf:type rml:LogicalSource .
+

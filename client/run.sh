@@ -1,0 +1,1 @@
+npx ldes-client http://localhost:3000/ldes/default/root

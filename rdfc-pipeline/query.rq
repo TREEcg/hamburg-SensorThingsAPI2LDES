@@ -1,0 +1,5 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX stapi: <https://pod.rubendedecker.be/scholar/ontologies/stapi>
+
+SELECT DISTINCT ?entity WHERE { ?entity a ?type . FILTER (?type IN (stapi:Observation)) }

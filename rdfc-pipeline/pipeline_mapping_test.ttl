@@ -1,0 +1,145 @@
+@prefix : <https://w3id.org/conn#>.
+@prefix ex:     <http://example.org/ns#>.
+@prefix js: <https://w3id.org/conn/js#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfl: <https://w3id.org/rdf-lens/ontology#>.
+@prefix stapi: <https://pod.rubendedecker.be/scholar/ontologies/stapi#> .
+
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tree:   <https://w3id.org/tree#> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix sds:    <https://w3id.org/sds#> .
+@prefix dcat:   <https://www.w3.org/ns/dcat#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix sh:     <http://www.w3.org/ns/shacl#>.
+@prefix void:   <http://rdfs.org/ns/void#> .
+@prefix ldes:   <https://w3id.org/ldes#>.
+@prefix dct:    <http://purl.org/dc/terms/>.
+
+<> owl:imports <node_modules/@rdfc/js-runner/ontology.ttl>.
+<> owl:imports <node_modules/@rdfc/js-runner/channels/file.ttl>.
+<> owl:imports <node_modules/@rdfc/file-utils-processors-ts/processors.ttl>.
+<> owl:imports <node_modules/@rdfc/http-utils-processor-ts/processors.ttl>.
+<> owl:imports <node_modules/@rdfc/rml-utils-processor-ts/processors.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-processors-ts/configs/sdsify.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-processors-ts/configs/bucketizer.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-storage-writer-ts/processor.ttl>.
+
+# Channels
+
+# Channel for js:GlobRead → js:Bucketize (metadata)
+<metadata/writer> a js:JsWriterChannel.
+<metadata/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <metadata/reader>;
+    :writer <metadata/writer>.
+
+# Channel for js:Bucketize → js:Ingest (metadata)
+<metadata/bucketized/writer> a js:JsWriterChannel.
+<metadata/bucketized/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <metadata/bucketized/reader>;
+    :writer <metadata/bucketized/writer>.
+
+<bucketized/writer> a js:JsWriterChannel.
+<bucketized/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <bucketized/reader>;
+    :writer <bucketized/writer>.
+
+# Channel for js:GlobRead → js:Y2R 
+<yarrrml/reader> a js:JsReaderChannel.
+<yarrrml/writer> a js:JsWriterChannel.
+[ ] a js:JsChannel;
+    :reader <yarrrml/reader>;
+    :writer <yarrrml/writer>.
+
+
+<rdf-raw/reader> a js:JsReaderChannel.
+<rdf-raw/writer> a js:JsWriterChannel.
+[ ] a js:JsChannel;
+    :reader <rdf-raw/reader>;
+    :writer <rdf-raw/writer>.
+
+# Channel for js:Y2R → js:RMLMapperReader 
+<rml/reader> a js:JsReaderChannel.
+<rml/writer> a js:JsWriterChannel.
+[ ] a js:JsChannel;
+    :reader <rml/reader>;
+    :writer <rml/writer>.
+
+# Channel for Fetch -> RMLMapper
+<data/writer> a js:JsWriterChannel.
+<data/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :writer <data/writer>;
+    :reader <data/reader>.
+
+# Channel for js:Sdsify → js:Ingest
+<sds/reader> a js:JsReaderChannel.
+<sds/writer> a js:JsWriterChannel.
+[ ] a js:JsChannel;
+    :reader <sds/reader>;
+    :writer <sds/writer>.
+
+<bucketized/writer> a js:JsWriterChannel.
+<bucketized/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <bucketized/reader>;
+    :writer <bucketized/writer>.
+
+
+
+
+
+
+##############
+# Processors #
+############## 
+
+# HTTP Fetch of the Observations
+[ ] a js:HttpFetch;
+	js:url [ a rdfl:EnvVariable;
+		rdfl:envDefault "";
+		rdfl:envKey "URL";
+	];
+	js:writer <data/writer>.
+
+# File reader channel for metadata input on js:Ingest
+[ ] a js:GlobRead;
+    js:glob <./metadata.ttl>;
+    js:output <metadata/writer>;
+    js:closeOnEnd "true"^^xsd:boolean.
+
+# Processor to read and stream out a set of YARRRML mapping files (versioned entities)
+[ ] a js:GlobRead;
+    js:glob <./mappings/yarrrml/*.yml>;
+    js:output <yarrrml/writer>.
+
+# Processor to convert YARRRML to RML mappings (versioned entities)
+[ ] a js:Y2R;
+    js:input <yarrrml/reader>;
+    js:output <rml/writer>.
+
+# Processor to do RML Mapping of input data to RDF
+[ ] a js:RMLMapperReader; 
+    js:output <file/writer>;
+    # js:output <out/writer>;
+    js:rmlSource [
+        js:sourceLocation "data.json";
+        js:input <data/reader>;
+    ];
+    js:mappings <rml/reader>;
+    js:rmlJar <./rmlmapper-7.3.3-r374-all.jar>.
+
+
+
+<file/writer> a :FileWriterChannel;
+    :fileOnReplace "false";
+    :filePath [ a rdfl:EnvVariable;
+        rdfl:envDefault <./out.ttl>;
+        rdfl:envKey "OUT";
+    ];
+.
+

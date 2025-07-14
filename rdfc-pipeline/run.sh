@@ -1,0 +1,2 @@
+# PAGESIZE=100 URL='https://iot.hamburg.de/v1.1/Datastreams(14256)/Observations?$orderby=resultTime%20%20asc' npx js-runner pipeline.ttl
+PAGESIZE=100 URL='https://iot.hamburg.de/v1.1/Datastreams(19525)/Observations?$orderby=resultTime%20%20asc' npx js-runner pipeline.ttl
