@@ -23,8 +23,12 @@ export function fetchStapi(
         nextLink = url.includes('?') ? url + `&$skip=0&$top=${pageSize}` :  url + `?$skip=0&$top=${pageSize}`
     } else nextLink = url;
 
+    // Set the orderBy on resultTime and make it ascending to ensure observations are requested from old to new
+    // url += "?%0A%24orderby%3DresultTime%20asc"
+
     return async () => {
         while(nextLink) {
+            nextLink += `&$orderby=resultTime%20asc`
             console.log('[SensorThings API fetcher] fetching', nextLink)
             const res = await fetch(nextLink);
             const page = (await res.json()) as any
